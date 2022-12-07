@@ -9,8 +9,10 @@ class Fichier():
     def __init__ (self, name, parent):
         self.name = name
         self.parent = parent
+        if not isinstance(self, Repertoire) and not self.parent == None:
+            self.parent.files.append(self)
 
-    def size(self):
+    def getSize(self):
         return self.size
 
     def __str__(self):
@@ -18,50 +20,46 @@ class Fichier():
 
 
 
-class Repertoire():
-    name = ""
-    parent = None
+class Repertoire(Fichier):
     subfolders = []
     files = []
 
     
     def __init__ (self, name, parent):
-        self.name = name
-        self.parent = parent
+        Fichier.__init__(self, name, parent)
         self.subfolders = []
         self.files = []
         if not self.parent == None:
             self.parent.subfolders.append(self)
 
-    def size(self):
+    def getSize(self):
         t = 0
         for f in self.files:
-            t = t + f.size()
+            t = t + f.getSize()
         for s in self.subfolders:
-            t = t + s.size()
+            t = t + s.getSize()
         return t
 
     def __str__(self):
         res = "+ " + self.name
         for s in self.subfolders:
             res = res + "\n" + str(s)
-        # for f in self.files:
-        #     res = res + "\n" + str(f)
+        for f in self.files:
+            res = res + "\n" + str(f)
         return res
 
     def show(self, n=0):
         spacer = "  " * n
         print(spacer + "Dir: " + self.name)
+        for f in self.files:
+            print(f"{spacer} - {f.name} {f.size:0,}")
         for s in self.subfolders:
-            # print(f"{spacer}1 {s.name} with {len(s.subfolders)} subs")    
-            # for s2 in s.subfolders:
-            #     print(f"{spacer}2 {s2.name} with {len(s2.subfolders)} subs")   
             s.show(n+1)
 
 lcount = 0
 root = Repertoire("/", None)
 current = root
-with io.open("input.txt", "r") as f:
+with io.open("sample1.txt", "r") as f:
 
     #this script only, trash line 1 "cd /" that makes the code unnecessarily complex
     l = f.readline()
@@ -100,5 +98,18 @@ with io.open("input.txt", "r") as f:
 
                     d = Repertoire(cmd[1], current)
                     current = d
+        else:
+            #folder enum
+            content = l.split(" ")
+            if content[0] == "dir":
+                #ignore, we'll list when visit
+                pass
+            else:
+                sz = int(content[0])
+                nm = content[1]
+                fi = Fichier(nm, current)
+                fi.size = sz
+
 
 root.show()
+print (f"size = {root.getSize():0,}")
