@@ -48,13 +48,14 @@ class Repertoire(Fichier):
             res = res + "\n" + str(f)
         return res
 
-    def show(self, n=0):
+    def show(self, n=0,showFiles=True):
         spacer = "  " * n
-        print(spacer + "Dir: " + self.name)
-        for f in self.files:
-            print(f"{spacer} - {f.name} {f.size:0,}")
+        print (F"{spacer}Dir: {self.name} [{self.getSize():0,}]")
+        if showFiles:
+            for f in self.files:
+                print(f"{spacer} - {f.name} {f.size:0,}")
         for s in self.subfolders:
-            s.show(n+1)
+            s.show(n+1, showFiles)
 
     def filterMax(self, maxVal):
         t = 0
@@ -75,6 +76,31 @@ class Repertoire(Fichier):
         
         return res
         
+
+    def smallestFolderBiggerThan (self, missing):
+        sz = self.getSize()
+        #end of recc
+        if len(self.subfolders) == 0:
+            #return sz if sz > missing else 0
+            x = sz if sz > missing else 0
+            #print (f"Leaf '{self.name}' : {sz} => {x}")
+            return x
+
+        #rec
+        l = []
+        for s in self.subfolders:
+            l.append(s.smallestFolderBiggerThan(missing))
+        #self
+        if sz > missing:
+            l.append(sz)
+
+        #return the min that is above missing
+        l_without_0 = [x for x in l if x != 0]
+        x = min(l_without_0) if len(l_without_0) > 0 else 0
+        #print (f"Rec '{self.name}' : {l_without_0} => {x}")
+        return x
+
+
 
 lcount = 0
 root = Repertoire("/", None)
@@ -131,7 +157,11 @@ with io.open("input.txt", "r") as f:
                 fi.size = sz
 
 
-root.show()
-print (f"size = {root.getSize():0,}")
-limit = 100000
-print(f"Filtering on maxsize = {limit:0,} then sum is = {sum(root.filterMax(limit)):0,}")
+root.show(showFiles=False)
+rootSz = root.getSize()
+print (f"size = {rootSz:0,}")
+TOTALDISK=70000000
+NEED=30000000
+missing = TOTALDISK - rootSz
+print(f"Missing {missing:0,} bytes")
+print(f"Minimum freeable space is {root.smallestFolderBiggerThan(missing):0,}")
