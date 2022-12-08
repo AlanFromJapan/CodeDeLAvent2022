@@ -162,6 +162,6 @@ rootSz = root.getSize()
 print (f"size = {rootSz:0,}")
 TOTALDISK=70000000
 NEED=30000000
-missing = TOTALDISK - rootSz
+missing = NEED - (TOTALDISK - rootSz)
 print(f"Missing {missing:0,} bytes")
 print(f"Minimum freeable space is {root.smallestFolderBiggerThan(missing):0,}")
