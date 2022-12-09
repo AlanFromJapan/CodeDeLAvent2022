@@ -7,39 +7,37 @@ bestScore = [0,0,0]
 def scenicScore(mx, x, y):
     global bestScore
     #top
-    max = mx[y][x]
-    t = 1
+    t = 0
     for r in range(y-1, -1, -1):
-        if mx[r][x] <= max and mx[r][x] < mx[y][x]:
-            t = t+1
-            max = mx[r][x]
+        t = t+1
+        if mx[r][x] >= mx[y][x]:
+            break
 
     #bottom
-    max = mx[y][x]
-    b = 1
-    for r in range(y, len(mx)):
-        if mx[r][x] <= max and mx[r][x] < mx[y][x]:
-            b = b+1
-            max = mx[r][x]
+    b = 0
+    for r in range(y+1, len(mx)):
+        b = b+1
+        if mx[r][x] >= mx[y][x]:
+            break
 
     #left
-    max = mx[y][x]
-    l = 1
+    l = 0
     for c in range(x-1, -1, -1):
-        if mx[y][c] <= max and mx[y][c] < mx[y][x]:
-            l = l+1
-            max = mx[y][c]
+        l = l+1
+        if mx[y][c] >= mx[y][x]:
+            break
+
 
     #right
-    max = mx[y][x]
-    d = 1
-    for c in range(x, len(mx[0])):
-        if mx[y][c] <= max and mx[y][c] < mx[y][x]:
-            d = d+1
-            max = mx[y][c]
+    d = 0
+    for c in range(x+1, len(mx[0])):
+        d = d+1
+        if mx[y][c] >= mx[y][x]:
+            break
+
 
     total = t * b * l * d
-    print (f"At ({x}, {y}) found top={t}, bottom={b}, left={l}, right={d} and product t*b*l*r={total}")
+    print (f"At ({x}, {y}) [{mx[y][x]}] found top={t}, bottom={b}, left={l}, right={d} and product t*b*l*r={total}")
     if total > bestScore[0]:
         print(f"Old best {bestScore} > {[total, x, y]} ")
         bestScore = [total, x, y]
@@ -125,7 +123,7 @@ with io.open(filename, "r") as f:
         #add the line as a list of char (not string) with the [*_string_] syntax
         mx.append([*l])
 
-print (mx)
+#print (mx)
 
 totalVisible = 0
 for x in range(len(mx[0])):
@@ -136,8 +134,8 @@ for x in range(len(mx[0])):
 
 print (f"Total visible is {totalVisible}.")
 
-for x in range(1, len(mx[0])-1):
-    for y in range(1, len(mx)-1):
+for y in range(1, len(mx)-1):
+    for x in range(1, len(mx[0])-1):
         scenicScore(mx, x, y)
 
 print(f"Maximum scenic score is {bestScore}")
