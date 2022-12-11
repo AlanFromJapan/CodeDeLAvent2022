@@ -10,6 +10,7 @@ class Monkey():
     testDivider = 0
     testIfTrueMonkey = 0
     testIfFalseMonkey = 0
+    processedItemsCount = 0
 
     def __init__(self, id, items, operation, testDivider, testTrue, testFalse) -> None:
         self.id = id
@@ -18,6 +19,7 @@ class Monkey():
         self.testDivider = testDivider
         self.testIfTrueMonkey = testTrue
         self.testIfFalseMonkey = testFalse
+        self.processedItemsCount = 0
 
     def calculateNewWorry(self, n):
         formula = self.operation.replace("old", str(n))
@@ -49,13 +51,16 @@ class Monkey():
 
                     print(f"    Item with worry level {newWorry} is thrown to monkey {self.testIfFalseMonkey}.")
                     monkeysDict[self.testIfFalseMonkey].giveItem (newWorry)
+                
+                #keep track
+                self.processedItemsCount = self.processedItemsCount + 1
 
             #finished processing all, list is empty
             self.items = []
 
 
     def __str__(self) -> str:
-        return "Monkey %d : items %s, Ops '%s', Mod %d" % (self.id, self.items, self.operation, self.testDivider)
+        return "Monkey %d : items %s, Ops '%s', Mod %d  ~~ Processed %d items." % (self.id, self.items, self.operation, self.testDivider, self.processedItemsCount)
 
 
 filename = "input.txt"
