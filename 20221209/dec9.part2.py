@@ -44,33 +44,33 @@ def moveHead(dir):
         snake[0] = [snake[0][0] +1, snake[0][1]] 
 
         #propagate reccursively
-        moveSegment(dir, 0)
+        moveNextSegment(dir, 0)
 
     if dir == "U":
         #anyway head moves         
         snake[0] = [snake[0][0], snake[0][1] -1] 
 
         #propagate reccursively
-        moveSegment(dir, 0)
+        moveNextSegment(dir, 0)
 
     if dir == "L":
         #anyway head moves    
         snake[0] = [snake[0][0] -1, snake[0][1]] 
 
         #propagate reccursively
-        moveSegment(dir, 0)
+        moveNextSegment(dir, 0)
 
     if dir == "D":
         #anyway head moves         
         snake[0] = [snake[0][0], snake[0][1] +1] 
 
         #propagate reccursively
-        moveSegment(dir, 0)
+        moveNextSegment(dir, 0)
 
 
-#move ONCE in that direction
+#move the NEXT segment of seg
 #ASSUME: seg is ALWAYS within 0 (head) and len(snake)-2 (the one BEFORE tail)
-def moveSegment(dir, seg):
+def moveNextSegment(dir, seg):
     global snake
     if dir == "R":
         #still within distance?
@@ -94,13 +94,13 @@ def moveSegment(dir, seg):
                 # And we need to consider the direction now to trigger the right action for the next segment
                 if oldPosNextSeg[1] < snake[seg][1]:
                     #was left and above so moved DOWN
-                    moveSegment("D", seg+1)
+                    moveNextSegment("D", seg+1)
                 elif oldPosNextSeg[1] > snake[seg][1]:
                     #was left and below so moved UP
-                    moveSegment("U", seg+1)
+                    moveNextSegment("U", seg+1)
                 else:
                     #same level so go right (Same as previous)
-                    moveSegment(dir, seg+1)
+                    moveNextSegment(dir, seg+1)
 
 
     if dir == "U":
@@ -125,13 +125,13 @@ def moveSegment(dir, seg):
                 # And we need to consider the direction now to trigger the right action for the next segment
                 if oldPosNextSeg[0] < snake[seg][0]:
                     #was left and below so moved RIGHT
-                    moveSegment("R", seg+1)
+                    moveNextSegment("R", seg+1)
                 elif oldPosNextSeg[0] > snake[seg][0]:
                     #was right and below so moved LEFT
-                    moveSegment("L", seg+1)
+                    moveNextSegment("L", seg+1)
                 else:
                     #same level so go UP (Same as previous)
-                    moveSegment(dir, seg+1)
+                    moveNextSegment(dir, seg+1)
 
 
 
@@ -151,13 +151,13 @@ def moveSegment(dir, seg):
                 # And we need to consider the direction now to trigger the right action for the next segment
                 if oldPosNextSeg[1] < snake[seg][1]:
                     #was left and above so moved DOWN
-                    moveSegment("D", seg+1)
+                    moveNextSegment("D", seg+1)
                 elif oldPosNextSeg[1] > snake[seg][1]:
                     #was left and below so moved UP
-                    moveSegment("U", seg+1)
+                    moveNextSegment("U", seg+1)
                 else:
                     #same level so go right (Same as previous)
-                    moveSegment(dir, seg+1)
+                    moveNextSegment(dir, seg+1)
 
 
     if dir == "D":
@@ -176,13 +176,13 @@ def moveSegment(dir, seg):
                 # And we need to consider the direction now to trigger the right action for the next segment
                 if oldPosNextSeg[0] < snake[seg][0]:
                     #was left and below so moved RIGHT
-                    moveSegment("R", seg+1)
+                    moveNextSegment("R", seg+1)
                 elif oldPosNextSeg[0] > snake[seg][0]:
                     #was right and below so moved LEFT
-                    moveSegment("L", seg+1)
+                    moveNextSegment("L", seg+1)
                 else:
                     #same level so go UP (Same as previous)
-                    moveSegment(dir, seg+1)
+                    moveNextSegment(dir, seg+1)
 
 
 
