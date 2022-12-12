@@ -6,7 +6,7 @@ sys.setrecursionlimit(10000)
 
 MAX_POINTBREAK = 10000
 pointBreak = 0
-debug = False
+debug = True
 
 class Nod():
     X = 0
@@ -53,11 +53,19 @@ class Nod():
                 if d < minChild:
                     minChild = d
             if not minChild == 999999999999999:
-                print(f"{zaMap[self.Y][self.X]} ({self.Y},{self.X})")
+                print(f"{zaMap[self.Y][self.X]} ({self.X},{self.Y})")
                 zaMapShadow[self.Y][self.X] = "*"
                 return 1 + minChild
             else:
                 return 999999999999999
+
+
+    def searchPathRec(self, myVal, x, y):
+        if Nod.canGo(myVal, Nod.mapVal(x, y)):
+            n = Nod(x, y)
+            if n.searchPath():
+                return n.maxTreeDepth(), n
+        return -1, None
 
     #THE recursion
     def searchPath(self) -> bool:
@@ -67,7 +75,7 @@ class Nod():
 
         myVal = Nod.mapVal(self.X, self.Y)
 
-        #debug
+        #debug to process bit by bit 
         if pointBreak >= MAX_POINTBREAK:
             #print the shadow and exit
             for l in zaMapShadow:
@@ -75,22 +83,25 @@ class Nod():
             
             print(f"Tree depth max is {root.maxTreeDepth()}")
             root.pathToGoal()
+            print (":( Pointbreak :(")
             exit()
         pointBreak = pointBreak + 1
         
+
         if debug:
             print(f"Nod ({self.X}, {self.Y}):")
 
         #Am I the end?
-        if myVal == "z":
+        if myVal == "E":
             self.isTheEnd = True
 
             if debug:
                 print(f"  the End!")
+
             return True
         
         #can I go anywhere?
-        if not Nod.canGo(myVal, Nod.mapVal(self.X +1, self.Y)) \
+        if not      Nod.canGo(myVal, Nod.mapVal(self.X +1, self.Y)) \
             and not Nod.canGo(myVal, Nod.mapVal(self.X, self.Y +1)) \
             and not Nod.canGo(myVal, Nod.mapVal(self.X -1, self.Y)) \
             and not Nod.canGo(myVal, Nod.mapVal(self.X , self.Y -1)) :
@@ -103,32 +114,33 @@ class Nod():
         #mark my place
         zaMapShadow[self.Y][self.X] = "."
 
-        if Nod.canGo(myVal, Nod.mapVal(self.X +1, self.Y)):
-            n = Nod(self.X +1, self.Y)
-            if n.searchPath():
-                self.addChild(n)
-                return True
-        if Nod.canGo(myVal, Nod.mapVal(self.X , self.Y+1)):
-            n = Nod(self.X, self.Y+1)
-            if n.searchPath():
-                self.addChild(n)
-                return True
-        if Nod.canGo(myVal, Nod.mapVal(self.X -1, self.Y)):
-            n = Nod(self.X -1, self.Y)
-            if n.searchPath():
-                self.addChild(n)
-                return True
-        if Nod.canGo(myVal, Nod.mapVal(self.X , self.Y-1)):
-            n = Nod(self.X, self.Y-1)
-            if n.searchPath():
-                self.addChild(n)
-                return True
+        dmin = 999999999999999
+        nmin = None
 
-        #unmark? No, don't search ALL path, one is enough
-        #zaMapShadow[self.Y][self.X] = myVal
+        d, n = self.searchPathRec(myVal, self.X +1, self.Y)
+        if d >=0 and dmin > d and n != None:
+            dmin = d
+            nmin = n
+        d, n = self.searchPathRec(myVal, self.X , self.Y+1)
+        if d >=0 and dmin > d and n != None:
+            dmin = d
+            nmin = n
+        d, n = self.searchPathRec(myVal, self.X -1, self.Y)
+        if d >=0 and dmin > d and n != None:
+            dmin = d
+            nmin = n
+        d, n = self.searchPathRec(myVal, self.X , self.Y-1)
+        if d >=0 and dmin > d and n != None:
+            dmin = d
+            nmin = n
 
-        #well it didn't work
-        return False
+        if nmin != None:
+            self.addChild(nmin)            
+
+        #unmark
+        zaMapShadow[self.Y][self.X] = myVal
+        
+        return nmin != None
 
 
 filename = "input.txt"
@@ -186,8 +198,9 @@ root.searchPath()
 
 
 print("Finished!")
-print(f"Tree depth max is {root.maxTreeDepth()}")
 root.pathToGoal()
 
 for l in zaMapShadow:
     print("".join(l))
+
+print(f"Tree depth max is {root.maxTreeDepth()}")
