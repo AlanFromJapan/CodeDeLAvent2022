@@ -80,7 +80,7 @@ class Nod():
             for l in zaMapShadow:
                 print("".join(l))
             
-            print(f"Tree depth max is {root.maxTreeDepth()}")
+            print(f"Tree depth max is {root.depth}")
             #root.pathToGoal()
             print (":( Pointbreak :(")
             exit()
