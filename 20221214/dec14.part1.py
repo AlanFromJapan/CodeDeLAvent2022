@@ -105,31 +105,34 @@ while True:
     y = 1
     #drop
     while True:
-        #overflow?
-        ovf = False
-        if y == depth+1:
-            ovf = True
+        try:
+            #overflow?
+            ovf = False
+            if y == depth:
+                ovf = True
+            #can move?
+            elif mx[y +1][x] == '.':
+                y = y + 1
+            elif x == 0:
+                ovf = True
+            elif x > 0 and mx[y +1][x-1] == '.':
+                y = y + 1
+                x = x - 1
+            elif x < len(mx[0]) -1 and mx[y +1][x+1] == '.':
+                y = y + 1
+                x = x + 1
+            else:
+                #stuck
+                mx[y][x] = 'o'
+                break
 
-        #can move?
-        if mx[y +1][x] == '.':
-            y = y + 1
-        elif x == 0:
-            ovf = True
-        elif x > 0 and mx[y +1][x-1] == '.':
-            y = y + 1
-            x = x - 1
-        elif x < len(mx[0]) -1 and mx[y +1][x+1] == '.':
-            y = y + 1
-            x = x + 1
-        else:
-            #stuck
-            mx[y][x] = 'o'
-            break
-
-        if ovf:
-            show()
-            print(f"Overflow at {count}")
-            exit(0)
+            if ovf:
+                show()
+                print(f"Overflow at {count}, the answer is {count -1}")
+                exit(0)
+        except Exception as ex:
+            print(f"x = {x}, y = {y}, count = {count}, depth = {depth}, mxwidth = {len(mx[0])}")
+            raise
 
     #dbg
     if count == llimit:
