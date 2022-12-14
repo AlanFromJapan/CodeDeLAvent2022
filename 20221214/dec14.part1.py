@@ -1,7 +1,7 @@
 import io
 import sys
 
-mx = [] #[['.'] *mx_cols ] *mx_rows
+mx = []
 depth = 0
 maxR = 0
 maxL = 1000
@@ -13,6 +13,20 @@ def show():
         print("".join(l))
 
     return
+
+def expand():
+    global mx, maxL, maxR
+    new = []
+    for l in mx:
+        new.append(['.'] + l + ['.'])
+    
+    #add the infinite floor
+    new[-1][0] = '#'
+    new[-1][-1] = '#'
+
+    maxL = maxL - 1
+    maxR = maxR + 1
+    mx = new
 
 filename = "input.txt"
 llimit = -1
@@ -72,7 +86,8 @@ with io.open(filename, "r") as f:
 
 #print([depth, maxL, maxR])
 #init matrix
-mx = [['.' for _ in range(maxR-maxL+1)] for _ in range(depth +1)]
+#depth = +1 for the 0 row with sand source and +2 because part 2
+mx = [['.' for _ in range(maxR-maxL+1)] for _ in range(depth +1 +2)]
 #######################################################################
 # Paint
 for v in vectors:
@@ -97,6 +112,11 @@ for v in vectors:
 
 mx[0][500-maxL] = '+'
 
+#add the floor
+for i in range(len(mx[0])):
+    mx[-1][i] = "#"
+
+
 count = 0
 while True:
     #new grain of sand
@@ -106,6 +126,7 @@ while True:
     #drop
     while True:
         try:
+            #TODO CHANGE the logic to a look forward to expan, make sure the x coord is still not impacted, re-loop
             #overflow?
             ovf = False
             if y == depth:
@@ -117,7 +138,7 @@ while True:
                 ovf = True
             elif x > 0 and mx[y +1][x-1] == '.':
                 y = y + 1
-                x = x - 1
+                x = x - 1            
             elif x < len(mx[0]) -1 and mx[y +1][x+1] == '.':
                 y = y + 1
                 x = x + 1
