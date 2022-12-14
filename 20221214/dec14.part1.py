@@ -38,8 +38,8 @@ with io.open(filename, "r") as f:
             #finished!
             break
 
-        if llimit > 0 and lcount > llimit:
-            break
+        # if llimit > 0 and lcount > llimit:
+        #     break
 
         #process!
         l = l.strip()
@@ -96,4 +96,44 @@ for v in vectors:
             x = x  + dir
 
 mx[0][500-maxL] = '+'
-show()
+
+count = 0
+while True:
+    #new grain of sand
+    count = count +1
+    x = 500 - maxL
+    y = 1
+    #drop
+    while True:
+        #overflow?
+        ovf = False
+        if y == depth+1:
+            ovf = True
+
+        #can move?
+        if mx[y +1][x] == '.':
+            y = y + 1
+        elif x == 0:
+            ovf = True
+        elif x > 0 and mx[y +1][x-1] == '.':
+            y = y + 1
+            x = x - 1
+        elif x < len(mx[0]) -1 and mx[y +1][x+1] == '.':
+            y = y + 1
+            x = x + 1
+        else:
+            #stuck
+            mx[y][x] = 'o'
+            break
+
+        if ovf:
+            show()
+            print(f"Overflow at {count}")
+            exit(0)
+
+    #dbg
+    if count == llimit:
+        show()
+        break
+
+
