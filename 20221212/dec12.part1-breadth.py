@@ -27,9 +27,9 @@ def canGo(_from:str, _to:str) -> bool:
 def breadthFirst(rount=0):
     global zaMapCount, zaMap, start, goal
 
-    if(rount == 20):
-        print("DBG: BREAK RECURSION!")
-        return
+    # if(rount == 20):
+    #     print("DBG: BREAK RECURSION!")
+    #     return
 
     for y in range(len(zaMapCount)):
         for x in range(len(zaMapCount[0])):
@@ -63,6 +63,7 @@ def breadthFirst(rount=0):
 
     if zaMapCount[start[1]][start[0]] != -1:
         #processed goal, we're done
+        print (f"Found a result in {rount} rounds.")
         return zaMapCount[start[1]][start[0]]
     else:
         #and again until meet the start
