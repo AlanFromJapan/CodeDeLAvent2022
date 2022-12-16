@@ -121,36 +121,44 @@ count = 0
 while True:
     #new grain of sand
     count = count +1
-    x = 500 - maxL
-    y = 1
+    truex = 500
+    y = 0
     #drop
     while True:
         try:
             #TODO CHANGE the logic to a look forward to expan, make sure the x coord is still not impacted, re-loop
             #overflow?
-            ovf = False
-            if y == depth:
-                ovf = True
-            #can move?
-            elif mx[y +1][x] == '.':
+            #recalculated on resize, x is the position in the "window" mx
+            x = truex - maxL
+
+            if mx[y +1][x] == '.':
                 y = y + 1
+            #go left? expand and check at next loop 
             elif x == 0:
-                ovf = True
-            elif x > 0 and mx[y +1][x-1] == '.':
+                expand()
+                continue
+            elif mx[y +1][x-1] == '.':
                 y = y + 1
-                x = x - 1            
-            elif x < len(mx[0]) -1 and mx[y +1][x+1] == '.':
+                x = x - 1          
+                truex = truex -1  
+            #go right? expand and check at next loop 
+            elif x == len(mx[0])-1:
+                expand()
+                continue
+            elif  mx[y +1][x+1] == '.':
                 y = y + 1
                 x = x + 1
+                truex = truex +1
             else:
                 #stuck
                 mx[y][x] = 'o'
+                if x == 500-maxL and y == 0:
+                    show()
+                    print(f"Completed at {count}, the answer is {count -1}")
+                    exit(0)
                 break
 
-            if ovf:
-                show()
-                print(f"Overflow at {count}, the answer is {count -1}")
-                exit(0)
+
         except Exception as ex:
             print(f"x = {x}, y = {y}, count = {count}, depth = {depth}, mxwidth = {len(mx[0])}")
             raise
