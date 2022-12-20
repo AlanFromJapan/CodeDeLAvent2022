@@ -19,7 +19,10 @@ def rotate(ipos):
     if val < 0:
         offset = offset - 1
 
-    print(f">> ipos={ipos}, lpos={lpos}, val={val}")
+    if offset + lpos > len(L):
+        offset = offset - len(L) +1
+
+    #print(f">> ipos={ipos}, lpos={lpos}, val={val}, offset={offset}")
 
     #remove value
     L = L[:lpos] + L[lpos+1:]
@@ -29,7 +32,18 @@ def rotate(ipos):
     L= L[:lpos + offset] + [val] + L[lpos + offset:]
     I= I[:ipos + offset] + [-1] + I[ipos + offset:]
 
-    
+
+def calcResult():
+    global L
+    zero = L.index(0)
+    print(f"1000th = {L[(zero + 1000)% len(L)]}")
+    print(f"2000th = {L[(zero + 2000)% len(L)]}")
+    print(f"3000th = {L[(zero + 3000)% len(L)]}")
+
+    r = L[(zero + 1000)% len(L)] + L[(zero + 2000)% len(L)] + L[(zero + 3000)% len(L)]
+    print(f"Result is {r}")
+    return r
+
 
 if len(sys.argv) < 2:
     print("INFO: no filename passed as param, defaulting to 'input.txt'")
@@ -64,6 +78,9 @@ with io.open(filename, "r") as f:
         L.append(int(l))
         I.append(lcount -1)
 
+# print("SOURCE:")
+# print(f"L = {L}")
+# print("")
 for i in range(len(L)):
     #at what position of I is the nth number we should process
     pos = -1
@@ -72,12 +89,15 @@ for i in range(len(L)):
             pos = j
             break
 
-    print(f"== Processing turn {i}  ==")
+    #print(f"== Processing turn {i}  ==")
     #print(f"L = {L}\nI = {I}")
     rotate(pos)
-    print(f"L = {L}")
+    #print(f"L = {L}")
     #print(f"I = {I}")
-    print("\n")
+    #print("\n")
 
-    if i == 100:
-        break
+    # if i == 100:
+    #     print("DEBUG STOP")
+    #     break
+
+calcResult()
