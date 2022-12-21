@@ -65,27 +65,45 @@ class Node:
                 #reccurse
                 return self.left.find(searchname) or self.right.find(searchname)
 
+
+    #calculate the reverse expected val for Part2
+    def targetVal(self, target, otherBranch, onTheLeft, type):
+        if type == "+":
+            return int(target) - int(otherBranch.value())
+        elif type == "-":
+            if onTheLeft:
+                return int(target) + int(otherBranch.value())
+            else:
+                return -(int(target) - int(otherBranch.value()))
+        elif type == "/":
+            if onTheLeft:
+                return int(target)  * int(otherBranch.value())
+            else:
+                return int(otherBranch.value()) // int(target)
+        elif type == "*":
+            return (int(int(target) // int(otherBranch.value())))        
+        
+        raise Exception("Shouldn't happen")
+
+
     def resolveEquality(self, target):
         global HUMAN
-        if self.name == HUMAN:
-            print(f"FOund it! I'm worth {target:0,d}")
-            self.left = int(target)
-        else:
-            if self.type == "0":
-                #found a wrong leaf, nothing to do
-                return
-            
-            onTheleft = self.left.find(HUMAN)
-            humnBranch, otherBranch = (self.left, self.right) if onTheleft else (self.right, self.left)
+        if self.type == "0":
+            #found a wrong leaf, nothing to do
+            return
+        
+        onTheleft = self.left.find(HUMAN)
+        humnBranch, otherBranch = (self.left, self.right) if onTheleft else (self.right, self.left)
 
-            if self.type == "+":
-                humnBranch.resolveEquality(int(target) - int(otherBranch.value()))
-            elif self.type == "-":
-                humnBranch.resolveEquality(int(target) + int(otherBranch.value()))
-            elif self.type == "/":
-                humnBranch.resolveEquality(int(target) * int(otherBranch.value()))
-            elif self.type == "*":
-                humnBranch.resolveEquality(int(int(target) // int(otherBranch.value())))
+        if humnBranch.name == HUMAN:
+            print(f"FOund it !")
+            
+            humnBranch.left = self.targetVal(target, otherBranch, onTheleft, self.type)
+
+            print(f">> Value {humnBranch.left:0,d}")
+        else:
+            humnBranch.resolveEquality(self.targetVal(target, otherBranch, onTheleft, self.type))
+
 
 
 
