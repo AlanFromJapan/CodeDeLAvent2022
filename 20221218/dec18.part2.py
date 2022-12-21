@@ -8,17 +8,20 @@ DBG=False
 cubes = []
 #dict of checked so we don't re-check
 checked = {}
+bubbles = []
 
 class Kub:
     x=0
     y=0
     z=0
     faces=6
+    isAir= False
 
-    def __init__(self, x,y,z) -> None:
+    def __init__(self, x,y,z, isAir = False) -> None:
         self.x = x
         self.y=y 
         self.z=z
+        self.isAir = isAir
 
     def decFaces(self):
         if self.faces >= 1:
@@ -37,7 +40,7 @@ class Kub:
             k.decFaces()
 
     def __str__(self) -> str:
-        return f"Kub [{self.x}, {self.y}, {self.z}] ({self.faces} faces)"
+        return f"{'AIR' if self.isAir else ''}Kub [{self.x}, {self.y}, {self.z}] ({self.faces} faces)"
 
     def uid(self)-> str:
         return f"{self.x},{self.y},{self.z}"
@@ -45,7 +48,7 @@ class Kub:
 
 #return if k IS an air bubble
 def isAirBubble (k: Kub)-> bool:
-    global cubes, checked
+    global cubes, checked, bubbles
     if k.uid() in checked:
         #leave
         return
@@ -70,6 +73,26 @@ def isAirBubble (k: Kub)-> bool:
             neighbors = neighbors +1
         elif c.z == k.z and c.x == k.x and c.y == k.y-1:
             neighbors = neighbors +1
+
+    #compound bubbles
+    for c in bubbles:
+        if c.z == k.z +1 and c.x == k.x and c.y == k.y:
+            neighbors = neighbors +1
+        elif c.z == k.z -1 and c.x == k.x and c.y == k.y:
+            neighbors = neighbors +1
+        elif c.z == k.z and c.x == k.x +1 and c.y == k.y:
+            neighbors = neighbors +1
+        elif c.z == k.z and c.x == k.x -1 and c.y == k.y:
+            neighbors = neighbors +1
+        elif c.z == k.z and c.x == k.x and c.y == k.y +1:
+            neighbors = neighbors +1
+        elif c.z == k.z and c.x == k.x and c.y == k.y-1:
+            neighbors = neighbors +1
+
+    if neighbors == 6:
+        bubbles.append(k)
+    if neighbors > 6:
+        raise Exception("WTH more than 6 neighbors??")
 
     return neighbors == 6
 
@@ -129,43 +152,43 @@ total = int(sum([int(c.faces) for c in cubes]))
 print(f"Total visible {total:0,d} faces over max {6 * len(cubes):0,d} (diff {6 * len(cubes) - total:0,d})")
 
 #part 2 the bubbles
-bubbles = 0
+bubblesCount = 0
 for c in cubes:
     k = Kub(c.x+1, c.y, c.z)
     if isAirBubble(k):
-        bubbles = bubbles +1
-        print(f"Found bubble {bubbles} at {k}")
+        bubblesCount = bubblesCount +1
+        print(f"Found bubble {bubblesCount} at {k}")
         continue
 
     k = Kub(c.x-1, c.y, c.z)
     if isAirBubble(k):
-        bubbles = bubbles +1
-        print(f"Found bubble {bubbles} at {k}")
+        bubblesCount = bubblesCount +1
+        print(f"Found bubble {bubblesCount} at {k}")
         continue
 
     k = Kub(c.x, c.y+1, c.z)
     if isAirBubble(k):
-        bubbles = bubbles +1
-        print(f"Found bubble {bubbles} at {k}")
+        bubblesCount = bubblesCount +1
+        print(f"Found bubble {bubblesCount} at {k}")
         continue
 
     k = Kub(c.x, c.y-1, c.z)
     if isAirBubble(k):
-        bubbles = bubbles +1
-        print(f"Found bubble {bubbles} at {k}")
+        bubblesCount = bubblesCount +1
+        print(f"Found bubble {bubblesCount} at {k}")
         continue
 
     k = Kub(c.x, c.y, c.z+1)
     if isAirBubble(k):
-        bubbles = bubbles +1
-        print(f"Found bubble {bubbles} at {k}")
+        bubblesCount = bubblesCount +1
+        print(f"Found bubble {bubblesCount} at {k}")
         continue
 
     k = Kub(c.x, c.y, c.z-1)
     if isAirBubble(k):
-        bubbles = bubbles +1
-        print(f"Found bubble {bubbles} at {k}")
+        bubblesCount = bubblesCount +1
+        print(f"Found bubble {bubblesCount} at {k}")
         continue
 
-print(f"FINISHED: Found total of {bubbles} single cube bubbles")
-print(f"UPDATED Total visible {total - 6 * bubbles:0,d} faces over max {6 * len(cubes):0,d} (diff {6 * len(cubes) - (total - 6 * bubbles):0,d})")
+print(f"FINISHED: Found total of {bubblesCount} single cube bubblesCount")
+print(f"UPDATED Total visible {total - 6 * bubblesCount:0,d} faces over max {6 * len(cubes):0,d} (diff {6 * len(cubes) - (total - 6 * bubblesCount):0,d})")
