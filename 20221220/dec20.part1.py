@@ -3,6 +3,7 @@ import sys
 
 filename = "input.txt"
 llimit = -1
+DBG = False
 
 #the current list of numbers 
 L = []
@@ -14,23 +15,28 @@ def rotate(ipos):
     global L, I
     lpos = ipos
     val = L[lpos]
+    newpos = lpos
 
-    offset = val % len(L)
-    if val < 0:
-        offset = offset - 1
+    newpos = lpos+ val
 
-    if offset + lpos > len(L):
-        offset = offset - len(L) +1
+    if newpos > len(L):
+        if DBG:
+            print(f"overflow: newpos {newpos} > len {len(L)}")
+        newpos = newpos % len(L) +1
+        
+        if DBG:
+            print(f"  > off {newpos} ")
 
-    #print(f">> ipos={ipos}, lpos={lpos}, val={val}, offset={offset}")
+    if DBG:
+        print(f">> ipos={ipos}, lpos={lpos}, val={val}, newpos={newpos}")
 
     #remove value
     L = L[:lpos] + L[lpos+1:]
     I = I[:ipos] + I[ipos+1:]
 
     #insert value (don't care of original pos anymore hence -1)
-    L= L[:lpos + offset] + [val] + L[lpos + offset:]
-    I= I[:ipos + offset] + [-1] + I[ipos + offset:]
+    L= L[:newpos] + [val] + L[newpos:]
+    I= I[:newpos] + [-1] + I[newpos:]
 
 
 def calcResult():
@@ -89,12 +95,14 @@ for i in range(len(L)):
             pos = j
             break
 
-    #print(f"== Processing turn {i}  ==")
-    #print(f"L = {L}\nI = {I}")
+    if DBG:
+        print(f"== Processing turn {i}  ==")
+        print(f"L = {L}\nI = {I}")
     rotate(pos)
-    #print(f"L = {L}")
-    #print(f"I = {I}")
-    #print("\n")
+    if DBG:
+        print(f"L = {L}")
+        print(f"I = {I}")
+        print("\n")
 
     # if i == 100:
     #     print("DEBUG STOP")
