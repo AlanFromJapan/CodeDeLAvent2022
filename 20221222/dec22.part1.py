@@ -72,7 +72,7 @@ def move(start):
         return start
 
 
-    if target[1] < 0:
+    if target[1] < 0 or  (currentDir()[1] == -1 and MX[target[1]][target[0]] == " "):
         #can wrap vertically top to bottom?
         for y in range(len(MX) -1, start[1], -1):
             if MX[y][target[0]] == ".":
@@ -96,7 +96,7 @@ def move(start):
         return start
 
 
-    if target[0] < 0:
+    if target[0] < 0 or (currentDir()[0] == -1 and MX[target[1]][target[0]] == " "):
         #wrap left to right
         for x in range(len(MX[target[1]]) -1, start[0], -1):
             if MX[target[1]][x] == ".":
@@ -120,6 +120,11 @@ def move(start):
     if MX[target[1]][target[0]] == ".":
         return target
 
+    ######################################
+    # SHouldn't happen
+    showMX()
+    print(f"**** Current pos {CUR}")
+    print(f"**** Try to move {currentDir()} from {start} -> {target}?")
     raise Exception("Why are we here?")
 
 
@@ -151,10 +156,19 @@ def showMX():
         l = MX[y]
 
         if y == CUR[1]:
-            l = l[:CUR[0]] + "@" + l[CUR[0]+1:]
+            l = l[:CUR[0]] + "\033[31m@\033[m" + l[CUR[0]+1:]
+        
+        if y % 10 == 0:
+            l = l + " : " + str(y)
+
         print(f"|{l}|")
     print("+" + "-" * len(MX[0]) + "+")
 
+
+def finalCal():
+    global CUR, D
+    #happens that D has the right value as per expected ... smells like a hint
+    return 1000 * (CUR[1] + 1) + 4 * (CUR[0] + 1) + D
 
 lcount = 0
 phase = 1
@@ -212,3 +226,5 @@ showMX()
 for step in range(len(CMD)):
     CUR = travel(CUR, step)
 showMX()
+
+print(f"SOLUTION : {int(finalCal()):0,d}")
