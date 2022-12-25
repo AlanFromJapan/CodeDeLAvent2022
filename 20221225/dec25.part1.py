@@ -45,43 +45,45 @@ def basen2dec(num, base):
 def prettyPrintN2Dec (num, base):
     print(f"Convert {num} (base {base}) to '{basen2dec(num, base)}' (base 10)")
 
+SNAFU = ["2", "1", "0", "-", "="]
+def base5toSnafu (n):
+    #assume input in base 5 already
+    #it should be like coding roman numbers, can be done with a carry like propagation
+    res = ""
+    n = str(n)
+    carry= 0
 
-prettyPrintN2Dec(1, 2)
-prettyPrintN2Dec(10, 2)
-prettyPrintN2Dec(100, 2)
-prettyPrintN2Dec(101, 2)
-prettyPrintN2Dec(1111, 2)
-prettyPrintN2Dec(10000, 2)
-prettyPrintN2Dec(111111, 2)
+    while len(n) > 0:
+        #digit is [0 - 6] (6 because max 4 + 2 carry)
+        digit = int(n[-1]) + carry
+        #print(f"  * digit {digit} = {n[-1]} + carry {carry}")
+        
+        nextCarry = 0
+        if digit > 4:
+            nextCarry = nextCarry + 1
+            digit = digit - 5
+        
+        if digit<= 2:
+            #nothing to do
+            res = str(digit) + res
+        elif digit == 3:
+            nextCarry = nextCarry +1
+            res = "=" + res
+        elif digit == 4:
+            nextCarry = nextCarry +1
+            res = "-" + res
 
-prettyPrintN2Dec(1, 5)
-prettyPrintN2Dec(2, 5)
-prettyPrintN2Dec(3, 5)
-prettyPrintN2Dec(12, 5)
-prettyPrintN2Dec(30, 5)
-prettyPrintN2Dec(31, 5)
-prettyPrintN2Dec(223, 5)
+        carry = nextCarry
 
-print("***************************************** ")
-prettyPrintDec2N(1, 2)
-prettyPrintDec2N(2, 2)
-prettyPrintDec2N(3, 2)
-prettyPrintDec2N(8, 2)
-prettyPrintDec2N(10, 2)
-prettyPrintDec2N(15, 2)
-prettyPrintDec2N(16, 2)
-prettyPrintDec2N(63, 2)
+        n = n[:-1]
 
-prettyPrintDec2N(1, 5)
-prettyPrintDec2N(2, 5)
-prettyPrintDec2N(3, 5)
-prettyPrintDec2N(8, 5)
-prettyPrintDec2N(10, 5)
-prettyPrintDec2N(15, 5)
-prettyPrintDec2N(16, 5)
-prettyPrintDec2N(63, 5)
+    if carry != 0:
+        res = str(carry) + res
 
-exit()
+    return res
+
+def prettyPrintN2Snafu (num, base):
+    print(f"Convert {num} (base {base}) to '{base5toSnafu(dec2basen(basen2dec(num, base), 5))}' (base snafu)")
 
 lcount = 0
 with io.open(filename, "r") as f:
@@ -97,8 +99,11 @@ with io.open(filename, "r") as f:
             break
 
         #process!
-        l = l.strip()
+        #l = l.strip()
 
         #edit me v v v v v  
         #print(f"{lcount}: {l}") 
-
+        ll = [l[:10].strip(), l[11:].strip()]
+        #print(ll)
+        prettyPrintN2Snafu(int(ll[0]), 10)
+        print(f"   Expects {ll[0]} -> {ll[1]}")
