@@ -120,18 +120,10 @@ def snafu2base5(snafu):
 def prettyPrintSnafu2N (num, base):
     print(f"Convert {num} (base snafu) to '{dec2basen(basen2dec(snafu2base5(num), 5), base)}' (base {base})")
 
-prettyPrintSnafu2N(1, 10)
-prettyPrintSnafu2N("2", 10)
-prettyPrintSnafu2N("1=", 10)
-prettyPrintSnafu2N("1-", 10)
-prettyPrintSnafu2N("10", 10)
-prettyPrintSnafu2N("2=", 10)
-prettyPrintSnafu2N("20", 10)
-prettyPrintSnafu2N("1=0", 10)
-prettyPrintSnafu2N("1121-1110-1=0", 10)
-exit()
+
 
 lcount = 0
+total = 0
 with io.open(filename, "r") as f:
     while True:
         l = f.readline()
@@ -144,6 +136,11 @@ with io.open(filename, "r") as f:
         if llimit > 0 and lcount > llimit:
             break
 
+
+        l = l.strip()
+        n = basen2dec(snafu2base5(l), 5)
+        total = total + n
+        prettyPrintSnafu2N(l, 10)
         '''
         #DEC to SNAFU
         #l = l.strip()
@@ -151,3 +148,5 @@ with io.open(filename, "r") as f:
         prettyPrintN2Snafu(int(ll[0]), 10)
         print(f"   Expects {ll[0]} -> {ll[1]}")
         '''
+
+print(f"TOTAL = {total} (b10) -> '{base5toSnafu(dec2basen(total, 5))}' (bSnafu)")
