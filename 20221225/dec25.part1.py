@@ -85,6 +85,52 @@ def base5toSnafu (n):
 def prettyPrintN2Snafu (num, base):
     print(f"Convert {num} (base {base}) to '{base5toSnafu(dec2basen(basen2dec(num, base), 5))}' (base snafu)")
 
+
+def snafu2base5(snafu):
+    res = ""
+    carry = 0
+    snafu = str(snafu)
+    while len(snafu) > 0:
+        digit = snafu[-1]
+        d = 0
+        nextcarry = 0
+
+        if digit == "=":
+            d = 3
+            nextcarry = -1
+        elif digit == "-":
+            d = 4
+            nextcarry = -1
+        else:
+            d = int(digit)
+        
+        d = d + carry
+
+        if d < 0:
+            d = d +5
+            nextcarry = nextcarry - 1
+        
+        res = str(d) + res
+        carry = nextcarry
+        snafu = snafu[:-1]
+
+
+    return int(res)
+
+def prettyPrintSnafu2N (num, base):
+    print(f"Convert {num} (base snafu) to '{dec2basen(basen2dec(snafu2base5(num), 5), base)}' (base {base})")
+
+prettyPrintSnafu2N(1, 10)
+prettyPrintSnafu2N("2", 10)
+prettyPrintSnafu2N("1=", 10)
+prettyPrintSnafu2N("1-", 10)
+prettyPrintSnafu2N("10", 10)
+prettyPrintSnafu2N("2=", 10)
+prettyPrintSnafu2N("20", 10)
+prettyPrintSnafu2N("1=0", 10)
+prettyPrintSnafu2N("1121-1110-1=0", 10)
+exit()
+
 lcount = 0
 with io.open(filename, "r") as f:
     while True:
@@ -98,12 +144,10 @@ with io.open(filename, "r") as f:
         if llimit > 0 and lcount > llimit:
             break
 
-        #process!
+        '''
+        #DEC to SNAFU
         #l = l.strip()
-
-        #edit me v v v v v  
-        #print(f"{lcount}: {l}") 
         ll = [l[:10].strip(), l[11:].strip()]
-        #print(ll)
         prettyPrintN2Snafu(int(ll[0]), 10)
         print(f"   Expects {ll[0]} -> {ll[1]}")
+        '''
